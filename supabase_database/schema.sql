@@ -15,8 +15,26 @@ CREATE TABLE IF NOT EXISTS devices (
   registered_at TIMESTAMP DEFAULT NOW(),
   last_synced_at TIMESTAMP,
   device_type TEXT DEFAULT 'smartphone',
-  metadata JSONB
+  metadata JSONB,
+  is_active BOOLEAN DEFAULT true
 );
+
+
 
 -- indexes for performance
 CREATE INDEX IF NOT EXISTS idx_devices_driver_id ON devices(driver_id);
+CREATE INDEX IF NOT EXISTS idx_devices_driver_active ON devices(driver_id, is_active) WHERE is_active = true;
+CREATE INDEX IF NOT EXISTS idx_devices_is_active ON devices(is_active);
+UPDATE devices d1
+SET is_active = true
+WHERE d1.id = (
+  SELECT MIN(id) 
+  FROM devices d2 
+  WHERE d2.driver_id = d1.driver_id
+)
+AND NOT EXISTS (
+  SELECT 1 
+  FROM devices d3 
+  WHERE d3.driver_id = d1.driver_id 
+  AND d3.is_active = true
+);

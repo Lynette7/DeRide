@@ -1,4 +1,4 @@
-import supabase from "../database-setup";
+import supabase from "../../database-setup.js";
 /**
  * Create a new driver
  * @param {string} substrateAddress - The substrate address of the driver
@@ -45,11 +45,11 @@ export async function getDriverByAddress(substrateAddress) {
  */
 export async function getOrCreateDriver(substrateAddress) {
   // Try to get existing driver
-  let driver = getDriverByAddress(substrateAddress);
+  let driver = await getDriverByAddress(substrateAddress);
 
   // If doesn't exist, create it
   if (!driver) {
-    driver = createDriver(substrateAddress);
+    driver = await createDriver(substrateAddress);
     console.log(`✓ New driver created: ${substrateAddress}`);
   } else {
     console.log(`✓ Existing driver found: ${substrateAddress}`);

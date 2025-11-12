@@ -1,4 +1,4 @@
-import supabase from "../database-setup";
+import supabase from "../../database-setup.js";
 export async function createDevice(deviceData) {
   const { data, error } = await supabase
     .from("devices")
@@ -87,6 +87,60 @@ export async function updateDevice(deviceId, updates) {
 
   if (error) {
     throw new Error(`Failed to update device: ${error.message}`);
+  }
+
+  return data;
+}
+
+// We need to handle multiple device registration
+/**
+ * Get the active device for a driver
+ * @param {number} driverId
+ * @returns {object|null} Active device or null
+ */
+export async function getActiveDeviceByDriverId(driverId) {
+  const { data, error } = await supabase
+    .from("devices")
+    .select("*")
+    .eq("driver_id", driverId)
+    .eq("is_active", true)
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    throw new Error(`Failed to get active device: ${error.message}`);
+  }
+
+  return data;
+}
+
+/**
+ * Set a device as active (deactivates other devices for the same driver)
+ * @param {string} deviceId
+ * @returns {object} Updated device
+ */
+export async function setDeviceActive(deviceId) {
+  // First get the device to find driver_id
+  const device = await getDeviceById(deviceId);
+  if (!device) {
+    throw new Error(`Device not found: ${deviceId}`);
+  }
+
+  // Deactivate all devices for this driver
+  await supabase
+    .from("devices")
+    .update({ is_active: false })
+    .eq("driver_id", device.driver_id);
+
+  // Activate this device
+  const { data, error } = await supabase
+    .from("devices")
+    .update({ is_active: true })
+    .select()
+    .eq("device_id", deviceId)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to set device active: ${error.message}`);
   }
 
   return data;
