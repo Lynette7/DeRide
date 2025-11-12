@@ -1,0 +1,21 @@
+{
+  "name": "deride",
+  "version": "1.0.0",
+  "description": "A decentralized, privacy-preserving, and peer-to-peer ride-sharing network.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lynette7/DeRide.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Lynette7/DeRide/issues"
+  },
+  "homepage": "https://github.com/Lynette7/DeRide#readme"
+}
