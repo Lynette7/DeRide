@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS devices (
   metadata JSONB,
   is_active BOOLEAN DEFAULT true
 );
+ALTER TABLE devices ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true;
 
 
 
